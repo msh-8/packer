@@ -100,8 +100,8 @@ build {
   # Post processor section.
   post-processor "shell-local" {
     inline = [
-      "mv output_of_test_source/packer_test_vm_temp-22.04.qcow2 /var/lib/libvirt/images/packer-test.qcow2",
-      "virt-install --virt-type=kvm --name packer-test --vcpus 2 --ram 4096 --os-variant=ubuntu22.04 --disk path=/var/lib/libvirt/images/packer-test.qcow2 --network=default --graphics=vnc --noautoconsole --import"
+      "mv output_of_test_source/packer_test_vm_temp-22.04.qcow2 /var/lib/libvirt/images/test-temp.qcow2",
+      "virt-install --virt-type=kvm --name test-temp --vcpus 2 --ram 4096 --os-variant=ubuntu22.04 --disk path=/var/lib/libvirt/images/test-temp.qcow2 --network=default --graphics=vnc --noautoconsole --import"
     ]
   }
 }
