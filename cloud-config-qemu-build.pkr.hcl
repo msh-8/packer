@@ -35,6 +35,7 @@ variable "vm_template_name" {
   type    = string
   default = "packer_test_vm_temp"
 }
+# local variables
 locals {
   ssh_username      = "ubuntu"
   ssh_password      = "test"
@@ -44,13 +45,14 @@ locals {
   PACKER_LOG_PATH   = "/var/log/packer.log"
   http_directory    = "http"
 }
-source "qemu" "test_source" {
+# source section
+source "qemu" "test_source" { # here the type of source is qemu.
   vm_name      = "${local.vm_name}.qcow2"
   iso_url      = "${var.iso_website_url}/${var.iso_file_name}"
   iso_checksum = "${local.iso_checksum_file}"
-  #qemuargs         = [["-cdrom", "cidata.iso"]]
-  qemuargs = [["-cdrom", "cloud-test-temp-seed.qcow2"]]
-  #qemuargs         = [["-m", "12G"], ["-smp", "8"], ["-drive", "if=virtio,format=raw,file=cloud-test-temp-seed.iso"], ["-serial", "mon:stdio"]]
+  disk_image   = true # This option is required if you set --cdrom in qemuargs.
+  # --cdrom argument is setting here to boot user-data and meta-data files, The Ubuntu-cloud-image is required this options.
+  qemuargs         = [["-cdrom", "cloud-test-temp-seed.qcow2"]]
   cpus             = 4
   memory           = 4096
   disk_compression = true
@@ -61,10 +63,9 @@ source "qemu" "test_source" {
   ssh_username     = "${local.ssh_username}"
   ssh_password     = "${local.ssh_password}"
   ssh_timeout      = "5m"
-  disk_image       = true
-  headless         = false
+  headless         = true     #Note that you will need to set true if you are running Packer on a Linux server without X11. set true in gui mode.
 }
-
+# Build section.
 build {
   sources = ["source.qemu.test_source"]
   #provisioner "shell" {
@@ -80,8 +81,8 @@ build {
     inline = [
       #"sudo  cp /tmp/00-installer-config.yaml /etc/netplan/00-installer-config.yaml",
       #"sudo chmod 600 /etc/netplan/00-installer-config.yaml"
-      "sleep 60",
-      "sudo rm -f /etc/netplan/50-cloud-init.conf"
+      "sleep 60",                                  # this section is required to wait finish the cloud-init configuration.
+      "sudo rm -f /etc/netplan/50-cloud-init.conf" # After cloud-init configuration procedure is finished, the 50-cloud-init.conf will be removed.
     ]
   }
   #provisioner "ansible" {
@@ -94,11 +95,13 @@ build {
   #      "--become-method=sudo"
   #      #"--connection=chroot"
   #    ]
- #}
- post-processor "shell-local" {
-     inline = [
-       "mv output_of_test_source/packer_test_vm_temp-22.04.qcow2 /var/lib/libvirt/images/packer-test.qcow2",
-       "virt-install --virt-type=kvm --name packer-test --vcpus 2 --ram 4096 --os-variant=ubuntu22.04 --disk path=/var/lib/libvirt/images/packer-test.qcow2 --network=default --graphics=vnc --noautoconsole --import"
-     ]
- }
+  #}
+
+  # Post processor section.
+  post-processor "shell-local" {
+    inline = [
+      "mv output_of_test_source/packer_test_vm_temp-22.04.qcow2 /var/lib/libvirt/images/packer-test.qcow2",
+      "virt-install --virt-type=kvm --name packer-test --vcpus 2 --ram 4096 --os-variant=ubuntu22.04 --disk path=/var/lib/libvirt/images/packer-test.qcow2 --network=default --graphics=vnc --noautoconsole --import"
+    ]
+  }
 }
