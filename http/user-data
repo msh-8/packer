@@ -1,0 +1,25 @@
+#cloud-config
+autoinstall:
+  version: 1
+  apt:
+    #fallback: continue-anyway
+    primary:
+      - arches: 
+        - amd64
+        - i386
+        uri: https://ubuntu.shatel.ir/ubuntu/
+    security:
+    - arches:
+      - amd64
+      - i386
+      uri: https://ubuntu.shatel.ir/ubuntu/
+  packages:
+  #- ubuntu-desktop
+  - net-tools
+  - traceroute
+  identity:
+    hostname: test_temp
+    password: "$6$lTtbVBlpuzE2RLjD$NV0ZEYmIzxa7hOlQ3gP6JnPzlMQHbU0WHBr4djhaniG0DhMW/jR0mGLIUmBDnksO82EuZL8wAhBuXfkUxfgmG."
+    username: ubuntu
+  late-commands:
+    - curtin in-target --target=/target -- systemctl enable serial-getty@ttyS0.service

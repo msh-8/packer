@@ -1,0 +1,64 @@
+#cloud-config
+hostname: test-temp
+manage_etc_hosts: false
+ssh_pwauth: true
+disable_root: false
+users:
+  - default
+  - name: ubuntu
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+chpasswd:
+  expire: false
+  users:
+    - name: root
+      #password: password
+      #type: text
+      password: $6$BM2N2.nEy3ypxsu4$WM9/I.oVW6emqkKKqqEYWdtjEZVbZz0cODo2MB0wWljqSdlKOvq4Go0FTheJJ.o1qQnw44ZSPTbuIBNX3bYDQ/
+    - name: ubuntu
+      password: $6$lTtbVBlpuzE2RLjD$NV0ZEYmIzxa7hOlQ3gP6JnPzlMQHbU0WHBr4djhaniG0DhMW/jR0mGLIUmBDnksO82EuZL8wAhBuXfkUxfgmG.
+apt:
+    #fallback: continue-anyway
+  primary:
+    - arches: 
+      - amd64
+      - i386
+      uri: https://ubuntu.shatel.ir/ubuntu/
+  security:
+    - arches:
+      - amd64
+      - i386
+      uri: https://ubuntu.shatel.ir/ubuntu/
+# package installation 
+packages:
+  #- ubuntu-desktop
+  - net-tools
+  - traceroute
+# timezone
+timezone: Asia/Tehran
+
+#Runcmd
+runcmd:
+    - sudo rm /etc/netplan/50-cloud-init.yaml
+# write-file
+write_files:
+- encoding: text/plain
+  content: |
+    network: 
+      config: disabled
+  owner: root:root
+  path: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+  permissions: '0644'
+- encoding: text/plain
+  content: |
+    network:
+      ethernets:
+        eth0:
+          match:
+            name: en*
+          dhcp4: true
+      version: 2
+  owner: root:root
+  path: /etc/netplan/00-installer-config.yaml
+  permissions: '0600'

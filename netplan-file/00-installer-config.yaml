@@ -1,0 +1,8 @@
+# This is the network config written by 'Packer'
+network:
+    ethernets:
+      eth0:
+        match:
+          name: en*
+        dhcp4: true
+    version: 2

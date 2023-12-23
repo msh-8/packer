@@ -1,0 +1,21 @@
+- 
+  name: 'Provision Image'
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: remove cloud-init.yaml
+      command:
+        cmd: "rm -rf /etc/netplan/50-cloud-init.yaml"
+    - name: create a file on home
+      file: 
+        path: "/home/ubuntu/test_ansible"
+        state: touch
+    - name: sleep 1 minutes
+      command:
+        cmd: "sleep 60"
+          #- name: install nginx 
+          #  package:
+          #    name: 
+          #      - traceroute
+          #    state: latest
