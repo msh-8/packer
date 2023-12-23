@@ -1,2 +1,3 @@
 # packer
-Hashicorp-Packer hcl files
+* Hashicorp-Packer hcl files
+* The repository is under completion.
