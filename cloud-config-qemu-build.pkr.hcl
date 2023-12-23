@@ -63,7 +63,7 @@ source "qemu" "test_source" { # here the type of source is qemu.
   ssh_username     = "${local.ssh_username}"
   ssh_password     = "${local.ssh_password}"
   ssh_timeout      = "5m"
-  headless         = true     #Note that you will need to set true if you are running Packer on a Linux server without X11. set true in gui mode.
+  headless         = true #Note that you will need to set true if you are running Packer on a Linux server without X11. set true in gui mode.
 }
 # Build section.
 build {
